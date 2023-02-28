@@ -81,6 +81,11 @@ std_deep=np.array(std_deep)
 
 diff_mean=mean_raw-mean_deep
 diff_std=std_raw-std_deep
+
+r_list=np.array(r_list)
+
+print("Percent of Traces with r=>0.8")
+print(100*len(r_list[r_list>=0.8])/len(r_list))
         
 
 
