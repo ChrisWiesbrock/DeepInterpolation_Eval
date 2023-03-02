@@ -17,7 +17,8 @@ import scipy.stats as stats
 import seaborn as sns
 from scipy.ndimage import uniform_filter1d
 
-path=r'C:\Users\wiesbrock\Desktop\Deepinter Eval\*.csv'
+save_path=r'C:\Users\wiesbrock\Desktop\Deepinter Eval'
+path=save_path+str('\*.csv')
 file_list=glob.glob(path)
 
 ending=[]
@@ -60,19 +61,29 @@ for i in header:
     r=stats.pearsonr(trace_raw,trace_deep)
     r_list.append(r[0])
     x=np.linspace(np.min(trace_raw),np.max(trace_raw))
+    plt.figure(dpi=300, figsize=(20,10))
+    plt.subplot(121)
     plt.title(i+" "+str(r[0]))
-    plt.plot(x, poly1d_fn(x), '--k')
+    plt.plot(x, poly1d_fn(x), '--k', label='regression line')
+    norm_x=np.linspace(min(trace_raw),max(trace_raw),100)
+    norm_y=norm_x
+    plt.plot(norm_x,norm_y,'r-', label='normal diagonal')
     plt.ylabel('Deep')
     plt.xlabel('raw')
-    plt.scatter(trace_raw,trace_deep)
-    if r[0]<0.9:
-        #y_1 = uniform_filter1d(trace_deep, size=len(trace_raw))
-        #y= uniform_filter1d(trace_deep, size=len(trace_deep))
-        plt.figure()
-        plt.plot(trace_deep,'k-')
-        plt.plot(trace_raw, 'g-')
-        #plt.plot(y_1, 'g--')
-        #plt.plot(y, 'k--')
+    plt.scatter(trace_raw,trace_deep,c=np.linspace(0,len(trace_raw),len(trace_raw)),cmap='rainbow', marker='.')
+    sns.despine()
+    plt.legend()
+
+    y_1 = uniform_filter1d(trace_deep, size=len(trace_raw))
+    y= uniform_filter1d(trace_deep, size=len(trace_deep))
+    plt.subplot(122)
+    plt.plot(trace_deep,'k-', label='raw trace')
+    plt.plot(trace_raw, 'g-', label='Deep interpolated')
+    sns.despine()
+    plt.legend()
+    #plt.plot(y_1, 'g--')
+    #plt.plot(y, 'k--')
+    plt.savefig(str(save_path)+str("\\")+str(i)+str('_fig.svg'))
         
 mean_raw=np.array(mean_raw)
 std_raw=np.array(std_raw)
@@ -86,8 +97,12 @@ r_list=np.array(r_list)
 
 print("Percent of Traces with r=>0.8")
 print(100*len(r_list[r_list>=0.8])/len(r_list))
-        
 
+#colorcode over time -check
+#alle traces ausgeben -check
+        
+#normal diagonale -check
+#subplots und abspeichern
 
 
         
